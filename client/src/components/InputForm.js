@@ -1,14 +1,36 @@
 import { useState } from "react"
+import axios from "axios";
+
 const InputForm = () => {
     const[number,setNumber]=useState('')
     const[name,setName]=useState('')
     const[expiry,setExpiry]=useState('')
-    const[cvc,setCvc]=useState('')
+    const[cvv,setCvv]=useState('')
     
+    const handlePayment = async () =>{
+        try{
+            console.log("Sending request with data:", number, name, expiry, cvv);
+            const response = await axios.post("http://localhost:5000/api/validate-credit-card", {
+                cardNumber: number,
+                cardName: name,
+                cardExpiry: expiry,
+                cardCvv: cvv,
+                });
+                if (response.data.success) {
+                console.log("Payment successful!");
+                } else {
+                console.error("Payment failed. Please check your card details.");
+                }
+        } catch (error){
+            console.error(error);
+            
+        }
+    }
+
     return ( 
         
         <div className="InputForm">
-            <form>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <input 
                     type="tel"
                     name="number"
@@ -32,13 +54,13 @@ const InputForm = () => {
                 />
                 <input 
                     type="tel"
-                    name="cvc"
+                    name="cvv"
                     placeholder="123"
-                    value={cvc}
-                    onChange={e=>setCvc(e.target.value)}
+                    value={cvv}
+                    onChange={e=>setCvv(e.target.value)}
                 />
             </form>
-            <button className="pay-btn">PAY</button>
+            <button className="pay-btn" onClick={handlePayment}>PAY</button>
         </div>
      );
 }
