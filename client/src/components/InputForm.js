@@ -4,7 +4,7 @@ const InputForm = () => {
     const[name,setName]=useState('')
     const[expiry,setExpiry]=useState('')
     const[cvc,setCvc]=useState('')
-
+    
     return ( 
         
         <div className="InputForm">
