@@ -5,23 +5,23 @@ app.use(express.json());
 
 const corsOptions = {
     origin: "http://localhost:3000",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: "POST",
     credentials: true,
-  };
+};
 app.use(cors(corsOptions));
 
+// Validation functions
 
-isValidNumber = (cardNumber) =>{
+isValidNumber = (cardNumber) => {
 
-    if(cardNumber.length >= 16 && cardNumber.length <= 19){
+    if (cardNumber.length >= 16 && cardNumber.length <= 19) {
         return true;
-        
     }
     return false;
-    
+
 }
 
-isValidName = (cardName) =>{
+isValidName = (cardName) => {
     return cardName.trim() !== "";
 }
 
@@ -44,22 +44,22 @@ isValidExpiry = (cardExpiry) => {
     return false;
 }
 
-getCardType = (cardNumber) =>{
+getCardType = (cardNumber) => {
     if (/^34|^37/.test(cardNumber)) {
         return "American Express";
-      }
-      return "Other";
+    }
+    return "Other";
 }
 
 
-isValidCvv = (cardNumber,cardCvv) =>{
+isValidCvv = (cardNumber, cardCvv) => {
     const cardType = getCardType(cardNumber);
 
     const cvvLengths = {
-      "American Express": 4,
-      "Other": 3,
+        "American Express": 4,
+        "Other": 3,
     };
-  
+
     const requiredLength = cvvLengths[cardType];
     return cardCvv.length === requiredLength;
 
@@ -67,7 +67,7 @@ isValidCvv = (cardNumber,cardCvv) =>{
 
 isValidLuhnCheckDigit = (cardNumber) => {
     let cardDigits = cardNumber.split('').map(Number);
-    
+
     for (let i = cardDigits.length - 2; i >= 0; i -= 2) {
         cardDigits[i] *= 2;
         if (cardDigits[i] > 9) {
@@ -76,40 +76,62 @@ isValidLuhnCheckDigit = (cardNumber) => {
     }
     
     const sum = cardDigits.reduce((acc, digit) => acc + digit, 0);
-    console.log("LUHN", sum % 10 === 0)
     return sum % 10 === 0;
 }
- 
+
 
 // POST
 
 
 app.post("/api/validate-credit-card", (req, res) => {
-  const { cardNumber, cardName, cardExpiry, cardCvv } = req.body;
+    try {
+        const { cardNumber, cardName, cardExpiry, cardCvv } = req.body;
 
-    console.log("Receving request with data:", cardNumber, cardName, cardExpiry, cardCvv);   
+        console.log("Receving request with data:", cardNumber, cardName, cardExpiry, cardCvv);
 
-    const isValidCardNumber = isValidNumber(cardNumber);
-    const isValidcardName = isValidName(cardName);
-    const isValidCardExpiry = isValidExpiry(cardExpiry);
-    const isValidCardCvv = isValidCvv(cardNumber,cardCvv);
-    const isValidLuhn = isValidLuhnCheckDigit(cardNumber);
-    const isValidCard = isValidCardNumber && isValidcardName && isValidCardExpiry && isValidCardCvv && isValidLuhn;
+        const isValidCardNumber = isValidNumber(cardNumber);
+        const isValidCardName = isValidName(cardName);
+        const isValidCardExpiry = isValidExpiry(cardExpiry);
+        const isValidCardCvv = isValidCvv(cardNumber, cardCvv);
+        const isValidLuhn = isValidLuhnCheckDigit(cardNumber);
+        const isValidCard =
+            isValidCardNumber &&
+            isValidCardName &&
+            isValidCardExpiry &&
+            isValidCardCvv &&
+            isValidLuhn;
 
-    console.log("isValidCardNumber", isValidCardNumber)
-    console.log("isValidcardName", isValidcardName)
-    console.log("isValidCardExpiry", isValidCardExpiry)
-    console.log("isValidCardCvv", isValidCardCvv)
-    console.log("isValidLuhn", isValidLuhn)
-
-    // Send the validation result as a JSON response
-    if (isValidCard) {
-        console.log("Valid card.");
-        res.status(200).json({ success: true , isValidNumber: isValidCardNumber,isValidName: isValidcardName ,isValidExpiry: isValidCardExpiry,isValidCvv:isValidCardCvv,isValidLuhn:isValidLuhn });
-      } else {
-        console.log("Invalid card.");
-        res.status(400).json({ success: false });
-      }
+        // Send the validation result as a JSON response
+        if (isValidCard) {
+            console.log("Valid card.");
+            res.status(200).json({
+                success: true,
+                isValidNumber: isValidCardNumber,
+                isValidName: isValidCardName,
+                isValidExpiry: isValidCardExpiry,
+                isValidCvv: isValidCardCvv,
+                isValidLuhn: isValidLuhn,
+                isValidCard: isValidCard
+            });
+        } else {
+            console.log("Invalid card.");
+            res.status(400).json({
+                success: false,
+                isValidNumber: isValidCardNumber,
+                isValidName: isValidCardName,
+                isValidExpiry: isValidCardExpiry,
+                isValidCvv: isValidCardCvv,
+                isValidLuhn: isValidLuhn,
+                message: "Validation failed",
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
 });
 
 app.listen(5000, () => {

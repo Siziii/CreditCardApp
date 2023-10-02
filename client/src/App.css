@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
 
 *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-    color: white;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  color: white;
 }
 
 /* App */
@@ -15,7 +15,7 @@
   display: flex;
   width: 100vw;
   height: 100vh;
-  background: #222222;
+  background: #111111;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,8 +27,80 @@
 .Card{
   width: 23.8rem;
   height: 14.7rem;
-  background: #6b9b9b;
+  background: #5b8c8c;
   border-radius: 1rem;
+}
+
+.Card .card-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem;
+  transition: all 150ms;
+}
+
+/* Card front side */
+
+.Card .card-container img{
+  width: 3rem;
+  height: 3rem;
+}
+.Card .card-container .number{
+  justify-content: center;
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.5rem;
+}
+.Card .card-container .info{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.7rem;
+}
+.Card .card-container-cvv .info span{
+  margin-right: .2rem;
+}
+.Card .card-container .dataL{
+  display: flex;
+  flex-direction: column;
+}
+.Card .card-container .dataR{
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+.Card .card-container p{
+  opacity: 50%;
+  margin-bottom: .3rem;
+}
+
+/* Card back side */
+
+.Card .card-container-cvv{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction:column;
+  border-radius: 1rem;
+  
+}
+.Card .card-container-cvv .line{
+  width: 100%;
+  height: 3rem;
+  background:#292929;
+  margin-top: 2rem;
+}
+.Card .card-container-cvv .info{
+  margin: 1.3rem;
+  padding-right: 1rem;
+  height: 2rem;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+.Card .card-container-cvv span{
+  color: black; 
 }
 
 /* InputForm */
@@ -49,13 +121,38 @@
   border-radius: 1rem;
   color: black;
 }
-
 .InputForm .pay-btn{
+  cursor: pointer;
   width: 100%;
   outline: none;
   border: none;
-  padding: 1rem;
+  padding: .8rem;
   margin-bottom: 1rem;
   border-radius: 1rem;
+  background: #5b8c8c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 150ms;
+}
+.InputForm .pay-btn p{
+  margin-right: .3rem;
+}
+.InputForm .pay-btn:hover{
   background: #6b9b9b;
+}
+
+.InputForm .pay-btn p{
+  margin-left: .5rem;
+  font-size: 1rem;
+}
+.InputForm input.error {
+  box-shadow: inset 0 0 0 2px red;
+}
+.InputForm input.correct{
+  box-shadow: inset 0 0 0 2px #6b9b9b;
+}
+
+.InputForm p{
+  text-align: center;
 }
