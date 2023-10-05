@@ -4,6 +4,7 @@ import { CreditCard } from "react-bootstrap-icons";
 
 const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,setCvvFocused}) => {
 
+    //states
     const [validationResults, setValidationResults] = useState({
         isValidNumber: true,
         isValidName: true,
@@ -12,11 +13,15 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
         isValidLuhn: true,
         isValidCard: true,
     });
+
+    //clean card number
     const formatCardNumber = (number) =>{
         const cleanedNumber = number.replace(/\D/g, '');
         return cleanedNumber;
     }
 
+    // Just a frontend debug
+    /*
     useEffect(() => {
         console.log("isValidCardNumber ", validationResults.isValidNumber);
         console.log("isValidcardName ", validationResults.isValidName);
@@ -24,7 +29,9 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
         console.log("isValidCardCvv ", validationResults.isValidCvv);
         console.log("isValidLuhn ", validationResults.isValidLuhn);
       }, [validationResults]);
+    */
 
+    //handle payment async function
     const handlePayment = async () =>{
         try{
             console.log("Sending request with data:", number, name, expiry, cvv);
@@ -44,7 +51,7 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
         } catch (error){
             if (!error.response.data.success){
                 setValidationResults(error.response.data);
-                console.log("Payment failed. Please check your card details.")
+                console.error("Payment failed. Please check your card details.")
             }
             else{
             console.error(error);
@@ -88,14 +95,18 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
                     value={cvv}
                     className={validationResults.isValidCvv ? 'correct' : 'error'}
                     onChange={e=>setCvv(e.target.value)}
+
+                    //display credit card back side when focused
                     onFocus={()=>setCvvFocused(true)}
                     onBlur={()=>setCvvFocused(false)}
                 />
             </form>
+            
             <button className="pay-btn" onClick={handlePayment}>
                 <p>PAY</p>
                 <CreditCard size="21"/>
             </button>
+            
             {   
                 validationResults.isValidCard ?
                 (<p>Payment successful!</p>

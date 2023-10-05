@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
+//CORS setup
 const corsOptions = {
     origin: "http://localhost:3000",
     methods: "POST",
@@ -45,6 +46,7 @@ isValidExpiry = (cardExpiry) => {
 }
 
 getCardType = (cardNumber) => {
+    //check if card number starts with 34 or 37 (amex)
     if (/^34|^37/.test(cardNumber)) {
         return "American Express";
     }
@@ -54,7 +56,7 @@ getCardType = (cardNumber) => {
 
 isValidCvv = (cardNumber, cardCvv) => {
     const cardType = getCardType(cardNumber);
-
+    //cards array
     const cvvLengths = {
         "American Express": 4,
         "Other": 3,
@@ -66,6 +68,7 @@ isValidCvv = (cardNumber, cardCvv) => {
 }
 
 isValidLuhnCheckDigit = (cardNumber) => {
+    //double every second n from back of the list, if n>9 substract 9, then sum the array, then check if sum mod10
     let cardDigits = cardNumber.split('').map(Number);
 
     for (let i = cardDigits.length - 2; i >= 0; i -= 2) {
@@ -89,11 +92,14 @@ app.post("/api/validate-credit-card", (req, res) => {
 
         console.log("Receving request with data:", cardNumber, cardName, cardExpiry, cardCvv);
 
+        // validation booleans
         const isValidCardNumber = isValidNumber(cardNumber);
         const isValidCardName = isValidName(cardName);
         const isValidCardExpiry = isValidExpiry(cardExpiry);
         const isValidCardCvv = isValidCvv(cardNumber, cardCvv);
         const isValidLuhn = isValidLuhnCheckDigit(cardNumber);
+
+        // valid card boolean
         const isValidCard =
             isValidCardNumber &&
             isValidCardName &&
@@ -103,6 +109,7 @@ app.post("/api/validate-credit-card", (req, res) => {
 
         // Send the validation result as a JSON response
         if (isValidCard) {
+            //everything is okay, return status 200
             console.log("Valid card.");
             res.status(200).json({
                 success: true,
@@ -114,6 +121,7 @@ app.post("/api/validate-credit-card", (req, res) => {
                 isValidCard: isValidCard
             });
         } else {
+            //card is invalid, return status 400
             console.log("Invalid card.");
             res.status(400).json({
                 success: false,
@@ -126,6 +134,7 @@ app.post("/api/validate-credit-card", (req, res) => {
             });
         }
     } catch (error) {
+        //server error
         console.error(error);
         res.status(500).json({
             success: false,
@@ -134,6 +143,7 @@ app.post("/api/validate-credit-card", (req, res) => {
     }
 });
 
+//start the server on port 5000
 app.listen(5000, () => {
     console.log("Server started on port 5000");
 });

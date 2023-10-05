@@ -2,6 +2,8 @@
 import Chip from '../images/chip.svg';
 
 const Card = ({number,name,expiry,cvv,cvvFocused,setCvvFocused}) => {
+
+    //fromat card number (nnnn nnnn nnnn nnnn)
     const formatCardNumber = (number) =>{
         const cleanedNumber = number.replace(/\D/g, '');
         const formattedNumber = cleanedNumber.replace(/(\d{4}(?=\d))/g, '$1 ');
@@ -21,6 +23,8 @@ const Card = ({number,name,expiry,cvv,cvvFocused,setCvvFocused}) => {
     return ( 
         <div className="Card" onMouseEnter={handleCardHover} onMouseLeave={handleCardLeave}>
             {!cvvFocused ? (
+
+            //Credit card front side
             <div className="card-container">
                 <img src={Chip} alt="Chip icon" />
                 <span className='number'>{formatCardNumber(number) || '0000 0000 0000 0000'}</span>
@@ -36,6 +40,7 @@ const Card = ({number,name,expiry,cvv,cvvFocused,setCvvFocused}) => {
                 </div>
             </div>
             ) : (
+            //credit card back side
             <div className="card-container-cvv">
                 <div className="line"/>
                 <div className="info">
