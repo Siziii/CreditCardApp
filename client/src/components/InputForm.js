@@ -13,6 +13,7 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
         isValidLuhn: true,
         isValidCard: true,
     });
+    const [showMessage, setShowMessage] = useState(false);
 
     //clean card number
     const formatCardNumber = (number) =>{
@@ -42,15 +43,17 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
                 cardCvv: cvv,
                 });
             setValidationResults(response.data);
-            
+            setShowMessage(true);
+
             if (response.data.success) {
-            console.log("Payment successful!");
+                console.log("Payment successful!");
             } else {
-            console.error("Payment failed. Please check your card details.");
+                console.error("Payment failed. Please check your card details.");
             }
         } catch (error){
             if (!error.response.data.success){
                 setValidationResults(error.response.data);
+                setShowMessage(true);
                 console.error("Payment failed. Please check your card details.")
             }
             else{
@@ -108,9 +111,12 @@ const InputForm = ({number,setNumber,name,setName,expiry,setExpiry,cvv,setCvv,se
             </button>
             
             {   
-                validationResults.isValidCard ?
-                (<p>Payment successful!</p>
-                ) : (<p>Please check your credit card info</p>)
+                showMessage &&
+                (validationResults.isValidCard ?
+                    (<p>Payment successful!</p>
+                    ) : (
+                    <p>Please check your credit card info</p>)
+                )
             }
         </div>
      );
